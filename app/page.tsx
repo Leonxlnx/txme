@@ -60,7 +60,7 @@ export default function Home() {
             className="text-[0.65rem] tracking-[0.2em] uppercase text-white/70"
             style={{ fontFamily: "var(--font-space)" }}
           >
-            Berlin — 2025
+            Munich — 2026
           </span>
         </div>
 
@@ -72,8 +72,15 @@ export default function Home() {
               }`}
           >
             <span
-              className="text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/40 border border-white/10 px-5 py-2 rounded-full"
-              style={{ fontFamily: "var(--font-space)" }}
+              className="text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 px-6 py-2.5 rounded-full"
+              style={{
+                fontFamily: "var(--font-space)",
+                background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)",
+              }}
             >
               Creative Studio for Digital Experiences
             </span>
@@ -82,8 +89,8 @@ export default function Home() {
           {/* Main headline */}
           <h1
             className={`text-center leading-[0.85] transition-all duration-[1600ms] delay-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${loaded
-                ? "opacity-100 translate-y-0 scale-100"
-                : "opacity-0 translate-y-12 scale-[0.96]"
+              ? "opacity-100 translate-y-0 scale-100"
+              : "opacity-0 translate-y-12 scale-[0.96]"
               }`}
             style={{ fontFamily: "var(--font-syne)" }}
           >
@@ -120,17 +127,36 @@ export default function Home() {
               }`}
           >
             <button
-              className="group relative px-8 py-3 bg-white/95 text-black text-[0.75rem] font-semibold tracking-[0.2em] uppercase rounded-none hover:bg-white transition-all duration-300 overflow-hidden"
-              style={{ fontFamily: "var(--font-space)" }}
+              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white transition-all duration-300 overflow-hidden"
+              style={{
+                fontFamily: "var(--font-space)",
+                boxShadow: "0 4px 24px rgba(255,255,255,0.1)",
+              }}
             >
+              {/* Corner + decorations */}
+              <span className="absolute top-1 left-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
+              <span className="absolute top-1 right-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
+              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
+              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
               <span className="relative z-10">Start a project</span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
             </button>
             <button
-              className="px-8 py-3 border border-white/20 text-white/70 text-[0.75rem] font-medium tracking-[0.2em] uppercase rounded-none hover:border-white/50 hover:text-white/90 transition-all duration-300"
-              style={{ fontFamily: "var(--font-space)" }}
+              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 transition-all duration-300"
+              style={{
+                fontFamily: "var(--font-space)",
+                background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
+              }}
             >
-              View our work
+              {/* Corner + decorations */}
+              <span className="absolute top-1 left-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
+              <span className="absolute top-1 right-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
+              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
+              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
+              <span className="relative z-10">View our work</span>
             </button>
           </div>
         </div>
