@@ -42,84 +42,91 @@ const fragmentShader = `
   
   varying vec2 vUv;
   
-  // Bayer 4x4 dithering pattern
-  float bayer4x4(vec2 pos) {
-    int x = int(mod(pos.x, 4.0));
-    int y = int(mod(pos.y, 4.0));
-    int index = x + y * 4;
+  // Simplex-style noise for organic movement
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
+  
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
     
-    float pattern[16];
-    pattern[0] = 0.0;    pattern[1] = 8.0;    pattern[2] = 2.0;    pattern[3] = 10.0;
-    pattern[4] = 12.0;   pattern[5] = 4.0;    pattern[6] = 14.0;   pattern[7] = 6.0;
-    pattern[8] = 3.0;    pattern[9] = 11.0;   pattern[10] = 1.0;   pattern[11] = 9.0;
-    pattern[12] = 15.0;  pattern[13] = 7.0;   pattern[14] = 13.0;  pattern[15] = 5.0;
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
     
-    for (int i = 0; i < 16; i++) {
-        if (i == index) return pattern[i] / 16.0;
-    }
-    return 0.0;
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+  }
+  
+  // Halftone dot pattern
+  float halftone(vec2 coord, float gray) {
+    vec2 cellSize = vec2(uPixelSize * 1.5);
+    vec2 cell = mod(coord, cellSize) / cellSize - 0.5;
+    float dotDist = length(cell);
+    float dotRadius = (1.0 - gray) * 0.5;
+    return smoothstep(dotRadius + 0.05, dotRadius - 0.05, dotDist);
   }
   
   void main() {
     vec2 uv = vUv;
-    
-    // Wave and Ripple Distortions
     float time = uTime;
-    float waveStrength = uWaveAmplitude * 0.1;
     
-    // Continuous waves
-    float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStrength;
-    float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStrength * 0.5;
+    // ── Organic noise-based waves (3 layers) ──
+    float n1 = noise(uv * uWaveFrequency * 2.0 + time * uWaveSpeed * 0.3);
+    float n2 = noise(uv * uWaveFrequency * 4.0 - time * uWaveSpeed * 0.2 + 50.0);
+    float n3 = noise(uv * uWaveFrequency * 1.0 + time * uWaveSpeed * 0.15 + 100.0);
     
+    float waveStrength = uWaveAmplitude * 0.06;
     vec2 distortedUv = uv;
-    distortedUv.x += wave1;
-    distortedUv.y += wave2;
+    distortedUv.x += (n1 - 0.5) * waveStrength + (n3 - 0.5) * waveStrength * 0.5;
+    distortedUv.y += (n2 - 0.5) * waveStrength + sin(uv.x * 8.0 + time * uWaveSpeed * 0.5) * waveStrength * 0.3;
     
-    // Mouse interaction (Ripple)
+    // ── Mouse ripple with organic distortion ──
     if (uMouseActive > 0.01) {
-        vec2 mousePos = uMouse;
-        float dist = distance(uv, mousePos);
-        float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
-        
-        float rippleFreq = uWaveFrequency * 5.0;
-        float rippleSpeed = uWaveSpeed * 1.0;
-        float rippleStrength = uWaveAmplitude * 0.05;
-        
-        float ripple = sin(dist * rippleFreq - time * rippleSpeed) * rippleStrength * mouseInfluence * uMouseActive;
-        distortedUv.x += ripple;
-        distortedUv.y += ripple;
+      vec2 mousePos = uMouse;
+      float dist = distance(uv, mousePos);
+      float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
+      
+      float ripple = sin(dist * uWaveFrequency * 8.0 - time * uWaveSpeed * 2.0);
+      ripple *= uWaveAmplitude * 0.03 * mouseInfluence * uMouseActive;
+      
+      vec2 dir = normalize(uv - mousePos + 0.001);
+      distortedUv += dir * ripple;
     }
     
-    // Sampling and Color Logic
+    // ── Sample texture ──
     vec4 color = texture2D(uTexture, distortedUv);
-    
-    // Grayscale conversion
     float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     
-    // Dithering
-    vec2 pixelCoord = floor(gl_FragCoord.xy / uPixelSize);
-    float dither = bayer4x4(pixelCoord);
+    // ── Apply contrast curve for punchier B&W ──
+    gray = smoothstep(0.1, 0.9, gray);
     
-    // 2-level quantization
-    float quantized;
-    float adjusted = gray + (dither - 0.5) * 0.5;
-    if (adjusted < 0.33) {
-        quantized = 0.0;
-    } else if (adjusted < 0.66) {
-        quantized = 0.5;
-    } else {
-        quantized = 1.0;
-    }
-    vec3 bwColor = vec3(quantized);
+    // ── Halftone dithering ──
+    float ht = halftone(gl_FragCoord.xy, gray);
+    vec3 bwColor = vec3(ht);
     
-    // Reveal Flashlight
+    // ── Subtle CRT scanlines ──
+    float scanline = sin(gl_FragCoord.y * 1.5) * 0.03 + 1.0;
+    bwColor *= scanline;
+    
+    // ── Cinematic vignette ──
+    float vignette = 1.0 - smoothstep(0.4, 1.4, length(uv - 0.5) * 1.8);
+    bwColor *= mix(0.7, 1.0, vignette);
+    
+    // ── Flashlight reveal ──
     float revealDist = distance(uv, uMouse);
     float innerRadius = uRevealRadius * (1.0 - uRevealSoftness);
     float outerRadius = uRevealRadius;
     float revealAmount = 1.0 - smoothstep(innerRadius, outerRadius, revealDist);
     revealAmount *= uMouseActive;
     
-    vec3 finalColor = mix(bwColor, color.rgb, revealAmount);
+    // Revealed area: smooth original color with slight film grain
+    float grain = (hash(uv * 500.0 + time) - 0.5) * 0.04;
+    vec3 revealColor = color.rgb + grain;
+    
+    vec3 finalColor = mix(bwColor, revealColor, revealAmount);
     
     gl_FragColor = vec4(finalColor, color.a);
   }
