@@ -2,7 +2,7 @@
 
 import { RevealWaveImage } from "@/components/ui/reveal-wave-image";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { Instagram, Github, ArrowUpRight } from "lucide-react";
+import { Instagram, Github } from "lucide-react";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -40,44 +40,7 @@ export default function Home() {
     [visibleItems]
   );
 
-  const projects = [
-    {
-      id: "proj-1",
-      number: "01",
-      title: "Meridian",
-      subtitle: "Brand Identity & Web",
-      description:
-        "A complete rebrand for a luxury wellness platform — from visual identity to a fully immersive digital experience.",
-      tags: ["Branding", "UI/UX", "Development"],
-      image:
-        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80",
-      year: "2026",
-    },
-    {
-      id: "proj-2",
-      number: "02",
-      title: "Aether",
-      subtitle: "E-Commerce Experience",
-      description:
-        "Reimagining online retail with spatial design principles and cinematic product storytelling.",
-      tags: ["E-Commerce", "3D", "Motion"],
-      image:
-        "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
-      year: "2025",
-    },
-    {
-      id: "proj-3",
-      number: "03",
-      title: "Solstice",
-      subtitle: "Interactive Campaign",
-      description:
-        "An award-winning interactive campaign that blurred the line between art installation and digital marketing.",
-      tags: ["Campaign", "WebGL", "Creative Dev"],
-      image:
-        "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80",
-      year: "2025",
-    },
-  ];
+
 
   return (
     <div className="relative bg-black">
@@ -384,214 +347,264 @@ export default function Home() {
             <div className="w-6 h-6 border-r border-b border-white/10" />
           </div>
         </div>
+
+        {/* ── Hero bottom fade to black ── */}
+        <div
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-48 md:h-64"
+          style={{
+            background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0.85) 65%, black 100%)",
+          }}
+        />
+        {/* + grid overlay fading out at hero bottom */}
+        <div
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-36 md:h-48 select-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ctext x='18' y='20' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='7' fill='rgba(255,255,255,0.12)'%3E%2B%3C/text%3E%3C/svg%3E")`,
+            backgroundSize: "36px 36px",
+            maskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.3) 80%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.3) 80%, transparent 100%)",
+          }}
+        />
       </div>
 
       {/* ══════════════════════════════════════════════════════════ */}
-      {/* ── SECTION 2: SELECTED WORK ── */}
+      {/* ── SECTION 2: ABOUT ── */}
       {/* ══════════════════════════════════════════════════════════ */}
       <section
         ref={sectionRef}
-        className="relative bg-[#060608] overflow-hidden"
+        className="relative bg-black overflow-hidden"
       >
-        {/* Subtle grain texture overlay */}
+        {/* Grain texture */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          className="pointer-events-none absolute inset-0 opacity-[0.025]"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
           }}
         />
 
-        {/* Top gradient transition from hero */}
-        <div className="h-32 bg-gradient-to-b from-black to-transparent" />
+        {/* Ambient glow orbs */}
+        <div className="pointer-events-none absolute top-20 -left-32 w-[500px] h-[500px] rounded-full opacity-[0.02]"
+          style={{ background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)" }}
+        />
+        <div className="pointer-events-none absolute bottom-10 -right-40 w-[600px] h-[600px] rounded-full opacity-[0.015]"
+          style={{ background: "radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%)" }}
+        />
 
-        {/* Section Header */}
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-          {/* Label + Line */}
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-20 md:py-32">
+          {/* ── Section Label ── */}
           <div
-            id="work-label"
+            id="about-label"
             data-reveal
-            className={`flex items-center gap-6 mb-16 transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("work-label")
+            className={`flex items-center gap-6 mb-20 md:mb-28 transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("about-label")
               ? "opacity-100 translate-x-0"
               : "opacity-0 -translate-x-8"
               }`}
           >
-            <span
-              className="text-[0.6rem] tracking-[0.5em] uppercase text-white/40"
-              style={{ fontFamily: "var(--font-space)" }}
-            >
-              Selected Work
+            {/* Frosty pill label — matching hero style */}
+            <span className="group/pill relative inline-block rounded-full p-[1px]">
+              <span
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+              />
+              <span
+                className="relative z-10 block text-[0.55rem] tracking-[0.5em] uppercase text-white/50 px-5 py-2 rounded-full"
+                style={{
+                  fontFamily: "var(--font-space)",
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(10,10,12,0.5)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 20px rgba(0,0,0,0.2)",
+                }}
+              >
+                About
+              </span>
             </span>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/15 to-transparent" />
-            <span
-              className="text-[0.6rem] tracking-[0.3em] uppercase text-white/25"
-              style={{ fontFamily: "var(--font-space)" }}
-            >
-              03 Projects
-            </span>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            {/* Corner marks */}
+            <span className="text-[0.45rem] text-white/15" style={{ fontFamily: "var(--font-space)" }}>+</span>
           </div>
 
-          {/* Section Title */}
+          {/* ── Main Content: Editorial Split ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-28 md:mb-36">
+            {/* Left Column: Big headline (7 cols) */}
+            <div
+              id="about-headline"
+              data-reveal
+              className={`lg:col-span-7 transition-all duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("about-headline")
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-12"
+                }`}
+            >
+              <h2
+                className="text-[clamp(2rem,5vw,4rem)] font-bold leading-[1.08] tracking-[-0.03em]"
+                style={{ fontFamily: "var(--font-syne)" }}
+              >
+                <span className="text-white/90">Born at the</span>
+                <br />
+                <span className="text-white/90">intersection of</span>
+                <br />
+                <span
+                  className="inline-block mt-1"
+                  style={{
+                    backgroundImage: "linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.15))",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  design &amp; technology.
+                </span>
+              </h2>
+
+              {/* Decorative detail under headline */}
+              <div className="flex items-center gap-3 mt-8">
+                <div className="h-[1px] w-12 bg-white/10" />
+                <span className="text-[0.5rem] text-white/15" style={{ fontFamily: "var(--font-space)" }}>+</span>
+                <div className="h-[1px] w-8 bg-white/[0.06]" />
+              </div>
+            </div>
+
+            {/* Right Column: Glass body card (5 cols) */}
+            <div
+              id="about-body"
+              data-reveal
+              className={`lg:col-span-5 flex flex-col justify-end transition-all duration-[1400ms] delay-[200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("about-body")
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-12"
+                }`}
+            >
+              {/* Frosted glass card */}
+              <div
+                className="relative rounded-xl p-6 md:p-8"
+                style={{
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%), rgba(10,10,14,0.5)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 40px rgba(0,0,0,0.3)",
+                }}
+              >
+                {/* Card corner decorations */}
+                <span className="absolute top-2 left-3 text-[0.4rem] text-white/10 leading-none" style={{ fontFamily: "var(--font-space)" }}>+</span>
+                <span className="absolute top-2 right-3 text-[0.4rem] text-white/10 leading-none" style={{ fontFamily: "var(--font-space)" }}>+</span>
+                <span className="absolute bottom-2 left-3 text-[0.4rem] text-white/10 leading-none" style={{ fontFamily: "var(--font-space)" }}>+</span>
+                <span className="absolute bottom-2 right-3 text-[0.4rem] text-white/10 leading-none" style={{ fontFamily: "var(--font-space)" }}>+</span>
+
+                <p
+                  className="text-[0.82rem] md:text-[0.9rem] leading-[1.85] text-white/45 font-light tracking-wide"
+                  style={{ fontFamily: "var(--font-space)" }}
+                >
+                  I&apos;m a designer, developer, and visual thinker who believes
+                  the web should feel alive. Every project I touch becomes an
+                  experience — not just a page.
+                </p>
+                <p
+                  className="mt-4 text-[0.82rem] md:text-[0.9rem] leading-[1.85] text-white/35 font-light tracking-wide"
+                  style={{ fontFamily: "var(--font-space)" }}
+                >
+                  From WebGL-driven microsites to interactive installations —
+                  I push pixels beyond their comfort zone.
+                </p>
+
+                {/* Subtle inner glow at top */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              </div>
+            </div>
+          </div>
+
+          {/* ── Stats Row: Frosted Glass Cards ── */}
           <div
-            id="work-title"
+            id="about-stats"
             data-reveal
-            className={`mb-24 md:mb-32 transition-all duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("work-title")
+            className={`transition-all duration-[1400ms] delay-[100ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("about-stats")
               ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-12"
+              : "opacity-0 translate-y-16"
               }`}
           >
-            <h2
-              className="text-[clamp(2rem,5vw,4.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-white/90"
-              style={{ fontFamily: "var(--font-syne)" }}
-            >
-              Stories we&apos;ve
-              <br />
-              <span className="text-white/30">brought to life</span>
-            </h2>
-            <p
-              className="mt-6 max-w-md text-[0.85rem] leading-relaxed text-white/35 font-light tracking-wide"
-              style={{ fontFamily: "var(--font-space)" }}
-            >
-              Each project is a partnership — a deep dive into vision, craft,
-              and the relentless pursuit of something remarkable.
-            </p>
-          </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              {[
+                { value: "2026", label: "Founded", detail: "EST." },
+                { value: "Munich", label: "Based in", detail: "DE" },
+                { value: "15+", label: "Projects shipped", detail: "WRK" },
+                { value: "3", label: "Disciplines", detail: "SKL" },
+              ].map((stat, i) => (
+                <div
+                  key={stat.label}
+                  id={`stat-${i}`}
+                  data-reveal
+                  className={`group/stat relative rounded-xl p-5 md:p-6 transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] cursor-default ${isVisible(`stat-${i}`)
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-8"
+                    }`}
+                  style={{
+                    transitionDelay: `${i * 120}ms`,
+                    background: "linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.008) 100%), rgba(12,12,16,0.6)",
+                    backdropFilter: "blur(16px)",
+                    WebkitBackdropFilter: "blur(16px)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.2)",
+                  }}
+                >
+                  {/* Hover glow border overlay */}
+                  <div
+                    className="absolute inset-0 rounded-xl opacity-0 group-hover/stat:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      boxShadow: "0 0 20px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.1)",
+                    }}
+                  />
 
-          {/* ── Project Cards ── */}
-          <div className="space-y-0">
-            {projects.map((project, i) => (
-              <div
-                key={project.id}
-                id={project.id}
-                data-reveal
-                className={`group/card transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible(project.id)
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-16"
-                  }`}
-                style={{ transitionDelay: `${i * 150}ms` }}
-              >
-                {/* Top divider */}
-                <div className="h-[1px] bg-white/[0.06]" />
+                  {/* Corner + */}
+                  <span className="absolute top-2 right-2.5 text-[0.4rem] text-white/8 group-hover/stat:text-white/25 transition-colors duration-500 leading-none" style={{ fontFamily: "var(--font-space)" }}>+</span>
 
-                <div className="py-12 md:py-16 cursor-pointer">
-                  <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-12">
-                    {/* Left: Number + Meta */}
-                    <div className="flex-shrink-0 md:w-16">
-                      <span
-                        className="text-[0.65rem] tracking-[0.3em] text-white/20 group-hover/card:text-white/50 transition-colors duration-500"
-                        style={{ fontFamily: "var(--font-space)" }}
-                      >
-                        {project.number}
-                      </span>
-                    </div>
+                  {/* Tiny detail label */}
+                  <span
+                    className="text-[0.45rem] tracking-[0.4em] uppercase text-white/15 group-hover/stat:text-white/30 transition-colors duration-500 block mb-3"
+                    style={{ fontFamily: "var(--font-space)" }}
+                  >
+                    {stat.detail}
+                  </span>
 
-                    {/* Center: Title + Description */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-4 mb-3">
-                        <h3
-                          className="text-[clamp(1.8rem,3.5vw,3rem)] font-bold tracking-[-0.02em] text-white/85 group-hover/card:text-white transition-colors duration-500"
-                          style={{ fontFamily: "var(--font-syne)" }}
-                        >
-                          {project.title}
-                        </h3>
-                        <span
-                          className="hidden md:inline text-[0.65rem] tracking-[0.2em] uppercase text-white/25 group-hover/card:text-white/45 transition-colors duration-500"
-                          style={{ fontFamily: "var(--font-space)" }}
-                        >
-                          {project.subtitle}
-                        </span>
-                        {/* Arrow that slides in on hover */}
-                        <div className="hidden md:flex items-center ml-auto opacity-0 -translate-x-4 group-hover/card:opacity-100 group-hover/card:translate-x-0 transition-all duration-500">
-                          <ArrowUpRight
-                            size={20}
-                            className="text-white/60"
-                            strokeWidth={1.5}
-                          />
-                        </div>
-                      </div>
+                  {/* Value */}
+                  <div
+                    className="text-[clamp(1.5rem,3vw,2.2rem)] font-bold tracking-[-0.02em] text-white/75 group-hover/stat:text-white/95 transition-colors duration-500 mb-1.5"
+                    style={{ fontFamily: "var(--font-syne)" }}
+                  >
+                    {stat.value}
+                  </div>
 
-                      <p
-                        className="max-w-lg text-[0.8rem] leading-relaxed text-white/30 group-hover/card:text-white/50 transition-colors duration-500"
-                        style={{ fontFamily: "var(--font-space)" }}
-                      >
-                        {project.description}
-                      </p>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mt-5">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[0.55rem] tracking-[0.2em] uppercase px-3 py-1 rounded-full text-white/25 group-hover/card:text-white/50 transition-all duration-500"
-                            style={{
-                              fontFamily: "var(--font-space)",
-                              border: "1px solid rgba(255,255,255,0.06)",
-                            }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        <span
-                          className="text-[0.55rem] tracking-[0.2em] uppercase px-3 py-1 text-white/15 group-hover/card:text-white/30 transition-colors duration-500"
-                          style={{ fontFamily: "var(--font-space)" }}
-                        >
-                          {project.year}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right: Image preview (appears on hover) */}
-                    <div className="md:w-64 lg:w-80 flex-shrink-0 overflow-hidden rounded-lg relative">
-                      <div
-                        className="aspect-[16/10] bg-white/[0.03] overflow-hidden rounded-lg group-hover/card:scale-[1.02] transition-transform duration-700 ease-out"
-                        style={{
-                          border: "1px solid rgba(255,255,255,0.04)",
-                        }}
-                      >
-                        <img
-                          src={project.image}
-                          alt={project.title}
-                          className="w-full h-full object-cover opacity-40 grayscale group-hover/card:opacity-80 group-hover/card:grayscale-0 transition-all duration-700 ease-out scale-105 group-hover/card:scale-100"
-                        />
-                        {/* Image overlay gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-transparent to-transparent opacity-60" />
-                      </div>
-                    </div>
+                  {/* Label */}
+                  <div
+                    className="text-[0.55rem] tracking-[0.25em] uppercase text-white/20 group-hover/stat:text-white/40 transition-colors duration-500"
+                    style={{ fontFamily: "var(--font-space)" }}
+                  >
+                    {stat.label}
                   </div>
                 </div>
-              </div>
-            ))}
-
-            {/* Bottom divider */}
-            <div className="h-[1px] bg-white/[0.06]" />
+              ))}
+            </div>
           </div>
 
-          {/* ── View All CTA ── */}
-          <div
-            id="view-all"
-            data-reveal
-            className={`flex justify-center py-20 md:py-28 transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isVisible("view-all")
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-8"
-              }`}
-          >
-            <button
-              className="group relative flex items-center gap-3 text-[0.7rem] tracking-[0.3em] uppercase text-white/40 hover:text-white/80 transition-all duration-500"
+          {/* Bottom decorative row */}
+          <div className="flex items-center justify-between mt-16 md:mt-20">
+            <div className="flex items-center gap-2">
+              <span className="text-[0.4rem] text-white/10" style={{ fontFamily: "var(--font-space)" }}>+</span>
+              <div className="h-[1px] w-8 bg-white/[0.06]" />
+            </div>
+            <span
+              className="text-[0.5rem] tracking-[0.5em] uppercase text-white/12"
               style={{ fontFamily: "var(--font-space)" }}
             >
-              <span className="relative">
-                View all projects
-                <span className="absolute -bottom-1 left-0 w-0 group-hover:w-full h-[1px] bg-white/40 transition-all duration-500" />
-              </span>
-              <ArrowUpRight
-                size={14}
-                className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
-                strokeWidth={1.5}
-              />
-            </button>
+              TXME — Munich, DE
+            </span>
+            <div className="flex items-center gap-2">
+              <div className="h-[1px] w-8 bg-white/[0.06]" />
+              <span className="text-[0.4rem] text-white/10" style={{ fontFamily: "var(--font-space)" }}>+</span>
+            </div>
           </div>
         </div>
 
-        {/* Bottom gradient fade to black */}
+        {/* Bottom gradient fade */}
         <div className="h-24 bg-gradient-to-b from-transparent to-black" />
       </section>
     </div>
