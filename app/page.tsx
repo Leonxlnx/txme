@@ -72,25 +72,25 @@ export default function Home() {
               }`}
           >
             {/* Pill Badge */}
-            <span className="group/pill relative pointer-events-auto cursor-default active:scale-[0.98] transition-all duration-500 inline-block rounded-full p-[1px]">
-              {/* Default border (visible normally, fades on hover) */}
+            <span className="group/pill relative inline-block rounded-full p-[1px] transition-all duration-500">
+              {/* Default border */}
               <span
                 className="absolute inset-0 rounded-full group-hover/pill:opacity-0 transition-opacity duration-500 pointer-events-none"
                 style={{
                   border: "1px solid rgba(255,255,255,0.12)",
                 }}
               />
-              {/* Liquid metal border (hidden by default, shown on hover) */}
+              {/* Metallic border on hover */}
               <span
                 className="absolute inset-0 rounded-full opacity-0 group-hover/pill:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  background: "conic-gradient(from var(--pill-angle), rgba(255,255,255,0.05), rgba(200,220,255,0.4), rgba(255,255,255,0.1), rgba(180,200,255,0.35), rgba(255,255,255,0.05))",
-                  animation: "pillSpin 3s linear infinite",
+                  border: "1px solid rgba(180,200,220,0.45)",
+                  boxShadow: "0 0 12px rgba(180,200,220,0.12), inset 0 0 8px rgba(180,200,220,0.06)",
                 }}
               />
               {/* Inner content */}
               <span
-                className="relative z-10 block text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 group-hover/pill:text-white/90 px-6 py-2.5 rounded-full transition-all duration-500"
+                className="relative z-10 block text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 group-hover/pill:text-white/80 px-6 py-2.5 rounded-full transition-all duration-500"
                 style={{
                   fontFamily: "var(--font-space)",
                   background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
