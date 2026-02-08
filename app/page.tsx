@@ -2,7 +2,7 @@
 
 import { RevealWaveImage } from "@/components/ui/reveal-wave-image";
 import { useEffect, useState, useRef } from "react";
-import { Instagram, Github, Twitter } from "lucide-react";
+import { Instagram, Github } from "lucide-react";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -93,7 +93,9 @@ export default function Home() {
               }}
             >
               {/* Shine sweep on hover */}
-              <span className="absolute inset-0 -translate-x-full group-hover/pill:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+              <span className="absolute inset-0 opacity-0 group-hover/pill:opacity-100 pointer-events-none transition-opacity duration-500">
+                <span className="absolute inset-0 -translate-x-full group-hover/pill:translate-x-[200%] transition-transform duration-[800ms] ease-out bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </span>
               <span className="relative z-10">Creative Studio for Digital Experiences</span>
             </span>
           </div>
@@ -139,7 +141,7 @@ export default function Home() {
               }`}
           >
             <button
-              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white hover:scale-[1.05] hover:-translate-y-1 active:scale-[0.96] active:translate-y-0 transition-all duration-300 overflow-hidden"
+              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-300 overflow-hidden"
               style={{
                 fontFamily: "var(--font-space)",
                 boxShadow: "0 4px 24px rgba(255,255,255,0.1)",
@@ -161,7 +163,7 @@ export default function Home() {
               <span className="relative z-10">Start a project</span>
             </button>
             <button
-              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 hover:scale-[1.05] hover:-translate-y-1 active:scale-[0.96] active:translate-y-0 transition-all duration-300 overflow-hidden"
+              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 hover:scale-[1.03] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-300 overflow-hidden"
               style={{
                 fontFamily: "var(--font-space)",
                 background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
@@ -212,7 +214,10 @@ export default function Home() {
               rel="noopener noreferrer"
               className="text-white/50 hover:text-white hover:scale-125 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300"
             >
-              <Twitter size={20} strokeWidth={1.5} />
+              {/* X (Twitter) logo */}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
             </a>
             <a
               href="#"
