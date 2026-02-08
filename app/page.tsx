@@ -1,8 +1,8 @@
 "use client";
 
 import { RevealWaveImage } from "@/components/ui/reveal-wave-image";
-import { useEffect, useState } from "react";
-import { Instagram, Github } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Instagram, Github, Twitter } from "lucide-react";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
@@ -72,7 +72,7 @@ export default function Home() {
               }`}
           >
             <span
-              className="text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 px-6 py-2.5 rounded-full pointer-events-auto cursor-default hover:text-white/80 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
+              className="group/pill text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 px-6 py-2.5 rounded-full pointer-events-auto cursor-default hover:text-white/90 active:scale-[0.98] transition-all duration-500 relative overflow-hidden"
               style={{
                 fontFamily: "var(--font-space)",
                 background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
@@ -82,15 +82,19 @@ export default function Home() {
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
-                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 30px rgba(255,255,255,0.08), 0 0 20px rgba(255,255,255,0.04)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)";
+                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(255,255,255,0.1), 0 0 60px rgba(255,255,255,0.04)";
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 100%)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
                 e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)";
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)";
               }}
             >
-              Creative Studio for Digital Experiences
+              {/* Shine sweep on hover */}
+              <span className="absolute inset-0 -translate-x-full group-hover/pill:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+              <span className="relative z-10">Creative Studio for Digital Experiences</span>
             </span>
           </div>
 
@@ -135,27 +139,29 @@ export default function Home() {
               }`}
           >
             <button
-              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-300 overflow-hidden"
+              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white hover:scale-[1.05] hover:-translate-y-1 active:scale-[0.96] active:translate-y-0 transition-all duration-300 overflow-hidden"
               style={{
                 fontFamily: "var(--font-space)",
                 boxShadow: "0 4px 24px rgba(255,255,255,0.1)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 8px 40px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.08)";
+                e.currentTarget.style.boxShadow = "0 12px 50px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.1)";
               }}
             >
+              {/* Shine sweep */}
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-600 ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
               {/* Corner + decorations */}
-              <span className="absolute top-1 left-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
-              <span className="absolute top-1 right-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
-              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
-              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute top-1 left-1.5 text-[0.5rem] text-black/15 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute top-1 right-1.5 text-[0.5rem] text-black/15 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-black/15 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-black/15 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
               <span className="relative z-10">Start a project</span>
             </button>
             <button
-              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-300"
+              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 hover:scale-[1.05] hover:-translate-y-1 active:scale-[0.96] active:translate-y-0 transition-all duration-300 overflow-hidden"
               style={{
                 fontFamily: "var(--font-space)",
                 background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
@@ -165,19 +171,23 @@ export default function Home() {
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
-                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 30px rgba(255,255,255,0.06)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 40px rgba(255,255,255,0.08), 0 0 30px rgba(255,255,255,0.04)";
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
                 e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)";
+                e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)";
               }}
             >
+              {/* Shine sweep */}
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-600 ease-in-out bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
               {/* Corner + decorations */}
-              <span className="absolute top-1 left-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
-              <span className="absolute top-1 right-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
-              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
-              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
+              <span className="absolute top-1 left-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/40 transition-colors duration-300">+</span>
+              <span className="absolute top-1 right-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/40 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/40 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/40 transition-colors duration-300">+</span>
               <span className="relative z-10">View our work</span>
             </button>
           </div>
@@ -189,16 +199,24 @@ export default function Home() {
             }`}
         >
           {/* Social Icons */}
-          <div className="flex items-center gap-5 pointer-events-auto">
+          <div className="flex items-center gap-6 pointer-events-auto">
             <a
               href="#"
-              className="text-white/50 hover:text-white/90 hover:scale-110 transition-all duration-300"
+              className="text-white/50 hover:text-white hover:scale-125 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300"
             >
               <Instagram size={20} strokeWidth={1.5} />
             </a>
             <a
+              href="https://x.com/LexnLin"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/50 hover:text-white hover:scale-125 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300"
+            >
+              <Twitter size={20} strokeWidth={1.5} />
+            </a>
+            <a
               href="#"
-              className="text-white/50 hover:text-white/90 hover:scale-110 transition-all duration-300"
+              className="text-white/50 hover:text-white hover:scale-125 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300"
             >
               {/* Dribbble */}
               <svg
@@ -219,7 +237,7 @@ export default function Home() {
             </a>
             <a
               href="#"
-              className="text-white/50 hover:text-white/90 hover:scale-110 transition-all duration-300"
+              className="text-white/50 hover:text-white hover:scale-125 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300"
             >
               <Github size={20} strokeWidth={1.5} />
             </a>
