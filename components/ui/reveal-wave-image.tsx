@@ -100,8 +100,9 @@ const fragmentShader = `
     vec4 color = texture2D(uTexture, distortedUv);
     float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     
-    // ── Apply contrast curve for punchier B&W ──
-    gray = smoothstep(0.1, 0.9, gray);
+    // ── Apply contrast curve — pushed darker ──
+    gray = smoothstep(0.2, 0.95, gray);
+    gray *= 0.75;
     
     // ── Halftone dithering ──
     float ht = halftone(gl_FragCoord.xy, gray);
