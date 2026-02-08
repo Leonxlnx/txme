@@ -3,17 +3,15 @@
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useRef, useState, useEffect, useCallback } from "react";
 
 /* =========================================================
-   RevealWaveImage Component (Optimized)
-   - B&W 2-level dithering by default.
-   - Animated continuous waves.
-   - Mouse-interactive flashlight reveal of original color.
-   - Mouse-interactive water ripples.
-   - Smooth fading when mouse enters/leaves.
-   - Uses CSS object-fit: cover for standard responsive sizing.
+   RevealWaveImage Component
+   - B&W dithering with multi-click color reveal waves.
+   - Supports up to 8 simultaneous click waves.
    ========================================================= */
+
+const MAX_CLICKS = 8;
 
 const vertexShader = `
   varying vec2 vUv;
@@ -40,9 +38,9 @@ const fragmentShader = `
   uniform float uWaveAmplitude;
   uniform float uMouseRadius;
 
-  // Click Wave Uniforms
-  uniform vec2 uClickPos;
-  uniform float uClickTime;
+  // Multi-click uniforms (up to 8)
+  uniform vec2 uClickPos[${MAX_CLICKS}];
+  uniform float uClickTime[${MAX_CLICKS}];
   uniform float uClickDuration;
   
   varying vec2 vUv;
@@ -59,7 +57,6 @@ const fragmentShader = `
     pattern[8] = 3.0;    pattern[9] = 11.0;   pattern[10] = 1.0;   pattern[11] = 9.0;
     pattern[12] = 15.0;  pattern[13] = 7.0;   pattern[14] = 13.0;  pattern[15] = 5.0;
     
-    // Manual index lookup for GLSL 1.0 compatibility
     if (index == 0) return pattern[0] / 16.0;
     if (index == 1) return pattern[1] / 16.0;
     if (index == 2) return pattern[2] / 16.0;
@@ -79,20 +76,19 @@ const fragmentShader = `
   }
   
   void main() {
-    // Zoom in to prevent edge artifacts from wave distortion
     vec2 uv = vUv * 0.9 + 0.05;
     float time = uTime;
     
-    // ── Distortions ──
-    float waveStrength = uWaveAmplitude * 0.1;
-    float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStrength;
-    float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStrength * 0.5;
+    // ── Background Distortions ──
+    float waveStr = uWaveAmplitude * 0.1;
+    float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStr;
+    float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStr * 0.5;
     
     vec2 distortedUv = uv;
     distortedUv.x += wave1;
     distortedUv.y += wave2;
     
-    // Hover Distortion (No Color Reveal anymore)
+    // Hover Distortion
     if (uMouseActive > 0.01) {
         float dist = distance(uv, uMouse);
         float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
@@ -100,27 +96,30 @@ const fragmentShader = `
         distortedUv += normalize(uv - uMouse + 0.0001) * hoverDistort;
     }
 
-    // Click Ripple Distortion & Reveal
-    float clickElapsed = time - uClickTime;
-    float clickProgress = clamp(clickElapsed / uClickDuration, 0.0, 1.0);
+    // ── Multi-Click Waves ──
     float revealAmount = 0.0;
     
-    if (clickProgress > 0.0 && clickProgress < 1.0) {
-        float clickDist = distance(uv, uClickPos);
-        float waveRadius = clickProgress * 1.5; // Expanding circle
-        float waveInner = waveRadius - 0.2;
-        float waveOuter = waveRadius;
+    for (int i = 0; i < ${MAX_CLICKS}; i++) {
+        float clickElapsed = time - uClickTime[i];
+        float clickProgress = clamp(clickElapsed / uClickDuration, 0.0, 1.0);
         
-        // The wave itself causes extra distortion
-        float waveStrength = (1.0 - clickProgress) * 0.05;
-        float waveFactor = smoothstep(waveInner, waveOuter, clickDist) * smoothstep(waveOuter + 0.1, waveOuter, clickDist);
-        distortedUv += normalize(uv - uClickPos + 0.0001) * waveFactor * waveStrength;
-        
-        // Reveal Logic: Everything inside the wave becomes colored temporarily
-        revealAmount = smoothstep(waveOuter, waveInner, clickDist) * (1.0 - clickProgress);
+        if (clickProgress > 0.0 && clickProgress < 1.0) {
+            float clickDist = distance(uv, uClickPos[i]);
+            float waveRadius = clickProgress * 1.5;
+            float waveInner = waveRadius - 0.2;
+            float waveOuter = waveRadius;
+            
+            // Wave distortion
+            float ws = (1.0 - clickProgress) * 0.05;
+            float waveFactor = smoothstep(waveInner, waveOuter, clickDist) * smoothstep(waveOuter + 0.1, waveOuter, clickDist);
+            distortedUv += normalize(uv - uClickPos[i] + 0.0001) * waveFactor * ws;
+            
+            // Color reveal (additive, clamped)
+            float reveal = smoothstep(waveOuter, waveInner, clickDist) * (1.0 - clickProgress);
+            revealAmount = max(revealAmount, reveal);
+        }
     }
     
-    // Clamp UVs so we never sample outside the texture
     distortedUv = clamp(distortedUv, 0.0, 1.0);
     
     vec4 texColor = texture2D(uTexture, distortedUv);
@@ -143,6 +142,11 @@ const fragmentShader = `
   }
 `;
 
+interface ClickData {
+    pos: THREE.Vector2;
+    time: number;
+}
+
 interface ImagePlaneProps {
     src: string;
     aspectRatio: number;
@@ -154,7 +158,7 @@ interface ImagePlaneProps {
     waveAmplitude: number;
     mouseRadius: number;
     isMouseInCanvas: boolean;
-    clickState: { pos: THREE.Vector2; time: number };
+    clicks: ClickData[];
     clockRef: React.MutableRefObject<number>;
 }
 
@@ -169,7 +173,7 @@ function ImagePlane({
     waveAmplitude,
     mouseRadius,
     isMouseInCanvas,
-    clickState,
+    clicks,
     clockRef,
 }: ImagePlaneProps) {
     const texture = useTexture(src);
@@ -177,6 +181,19 @@ function ImagePlane({
     const { pointer } = useThree();
     const mouseActiveRef = useRef(0);
     const hasEnteredRef = useRef(false);
+
+    // Create initial arrays for uniforms
+    const initClickPos = useMemo(() => {
+        const arr: THREE.Vector2[] = [];
+        for (let i = 0; i < MAX_CLICKS; i++) arr.push(new THREE.Vector2(-10, -10));
+        return arr;
+    }, []);
+
+    const initClickTimes = useMemo(() => {
+        const arr: number[] = [];
+        for (let i = 0; i < MAX_CLICKS; i++) arr.push(-100);
+        return arr;
+    }, []);
 
     const uniforms = useMemo(
         () => ({
@@ -191,19 +208,14 @@ function ImagePlane({
             uWaveFrequency: { value: waveFrequency },
             uWaveAmplitude: { value: waveAmplitude },
             uMouseRadius: { value: mouseRadius },
-            uClickPos: { value: new THREE.Vector2(-10, -10) },
-            uClickTime: { value: -100 },
+            uClickPos: { value: initClickPos },
+            uClickTime: { value: initClickTimes },
             uClickDuration: { value: 1.5 },
         }),
         [
-            texture,
-            revealRadius,
-            revealSoftness,
-            pixelSize,
-            waveSpeed,
-            waveFrequency,
-            waveAmplitude,
-            mouseRadius,
+            texture, revealRadius, revealSoftness, pixelSize,
+            waveSpeed, waveFrequency, waveAmplitude, mouseRadius,
+            initClickPos, initClickTimes,
         ],
     );
 
@@ -218,8 +230,17 @@ function ImagePlane({
             const elapsed = state.clock.elapsedTime;
             material.uniforms.uTime.value = elapsed;
             clockRef.current = elapsed;
-            material.uniforms.uClickPos.value.copy(clickState.pos);
-            material.uniforms.uClickTime.value = clickState.time;
+
+            // Update all click slots
+            for (let i = 0; i < MAX_CLICKS; i++) {
+                if (i < clicks.length) {
+                    material.uniforms.uClickPos.value[i].copy(clicks[i].pos);
+                    material.uniforms.uClickTime.value[i] = clicks[i].time;
+                } else {
+                    material.uniforms.uClickPos.value[i].set(-10, -10);
+                    material.uniforms.uClickTime.value[i] = -100;
+                }
+            }
 
             if (isMouseInCanvas) hasEnteredRef.current = true;
 
@@ -275,7 +296,7 @@ export const RevealWaveImage = ({
 }: RevealWaveImageProps) => {
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
     const [aspectRatio, setAspectRatio] = useState<number | null>(null);
-    const [clickState, setClickState] = useState({ pos: new THREE.Vector2(-10, -10), time: -100 });
+    const [clicks, setClicks] = useState<ClickData[]>([]);
     const clockRef = useRef(0);
 
     useEffect(() => {
@@ -286,17 +307,28 @@ export const RevealWaveImage = ({
         };
     }, [src]);
 
+    const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = 1.0 - (e.clientY - rect.top) / rect.height;
+        const now = clockRef.current;
+
+        setClicks((prev) => {
+            // Remove expired clicks (older than duration) and add new one
+            const duration = 1.5;
+            const active = prev.filter((c) => now - c.time < duration);
+            const updated = [...active, { pos: new THREE.Vector2(x, y), time: now }];
+            // Keep only last MAX_CLICKS
+            return updated.slice(-MAX_CLICKS);
+        });
+    }, []);
+
     return (
         <div
             className={`relative overflow-hidden cursor-crosshair ${className}`}
             onMouseEnter={() => setIsMouseInCanvas(true)}
             onMouseLeave={() => setIsMouseInCanvas(false)}
-            onClickCapture={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = 1.0 - (e.clientY - rect.top) / rect.height;
-                setClickState({ pos: new THREE.Vector2(x, y), time: clockRef.current });
-            }}
+            onClickCapture={handleClick}
         >
             {aspectRatio !== null && (
                 <Canvas
@@ -315,7 +347,7 @@ export const RevealWaveImage = ({
                         waveAmplitude={waveAmplitude}
                         mouseRadius={mouseRadius}
                         isMouseInCanvas={isMouseInCanvas}
-                        clickState={clickState}
+                        clicks={clicks}
                         clockRef={clockRef}
                     />
                 </Canvas>

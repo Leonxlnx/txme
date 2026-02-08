@@ -72,7 +72,7 @@ export default function Home() {
               }`}
           >
             <span
-              className="text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 px-6 py-2.5 rounded-full"
+              className="text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 px-6 py-2.5 rounded-full pointer-events-auto cursor-default hover:text-white/80 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
               style={{
                 fontFamily: "var(--font-space)",
                 background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
@@ -80,6 +80,14 @@ export default function Home() {
                 WebkitBackdropFilter: "blur(12px)",
                 border: "1px solid rgba(255,255,255,0.12)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
+                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 30px rgba(255,255,255,0.08), 0 0 20px rgba(255,255,255,0.04)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)";
               }}
             >
               Creative Studio for Digital Experiences
@@ -127,21 +135,27 @@ export default function Home() {
               }`}
           >
             <button
-              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white transition-all duration-300 overflow-hidden"
+              className="group relative px-10 py-3.5 bg-white/90 text-black text-[0.7rem] font-semibold tracking-[0.2em] uppercase rounded-lg hover:bg-white hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-300 overflow-hidden"
               style={{
                 fontFamily: "var(--font-space)",
                 boxShadow: "0 4px 24px rgba(255,255,255,0.1)",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 8px 40px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.1)";
+              }}
             >
               {/* Corner + decorations */}
-              <span className="absolute top-1 left-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
-              <span className="absolute top-1 right-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
-              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
-              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-black/20 leading-none font-light">+</span>
+              <span className="absolute top-1 left-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute top-1 right-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-black/20 leading-none font-light group-hover:text-black/40 transition-colors duration-300">+</span>
               <span className="relative z-10">Start a project</span>
             </button>
             <button
-              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 transition-all duration-300"
+              className="group relative px-10 py-3.5 text-white/70 text-[0.7rem] font-medium tracking-[0.2em] uppercase rounded-lg hover:text-white/95 hover:scale-[1.04] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-300"
               style={{
                 fontFamily: "var(--font-space)",
                 background: "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)",
@@ -150,12 +164,20 @@ export default function Home() {
                 border: "1px solid rgba(255,255,255,0.12)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
+                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 30px rgba(255,255,255,0.06)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)";
+              }}
             >
               {/* Corner + decorations */}
-              <span className="absolute top-1 left-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
-              <span className="absolute top-1 right-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
-              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
-              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-white/15 leading-none font-light">+</span>
+              <span className="absolute top-1 left-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
+              <span className="absolute top-1 right-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 left-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
+              <span className="absolute bottom-0.5 right-1.5 text-[0.5rem] text-white/15 leading-none font-light group-hover:text-white/30 transition-colors duration-300">+</span>
               <span className="relative z-10">View our work</span>
             </button>
           </div>
