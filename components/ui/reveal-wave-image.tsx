@@ -60,13 +60,15 @@ const fragmentShader = `
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
   }
   
-  // Plus/cross shaped halftone pattern
+  // Mini plus (+) pattern
   float halftone(vec2 coord, float gray) {
-    vec2 cellSize = vec2(uPixelSize * 3.0);
+    vec2 cellSize = vec2(uPixelSize * 2.5);
     vec2 cell = mod(coord, cellSize) / cellSize - 0.5;
-    float armWidth = gray * 0.45;
-    float crossDist = min(abs(cell.x), abs(cell.y));
-    return smoothstep(armWidth + 0.03, armWidth - 0.03, crossDist);
+    float armThick = 0.08;
+    float armLen = gray * 0.42;
+    float hBar = step(abs(cell.y), armThick) * step(abs(cell.x), armLen);
+    float vBar = step(abs(cell.x), armThick) * step(abs(cell.y), armLen);
+    return max(hBar, vBar);
   }
   
   void main() {
@@ -100,8 +102,9 @@ const fragmentShader = `
     vec4 color = texture2D(uTexture, distortedUv);
     float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     
-    // ── Contrast curve ──
-    gray = smoothstep(0.05, 0.85, gray);
+    // ── Soft contrast ──
+    gray = smoothstep(0.0, 1.0, gray);
+    gray = pow(gray, 0.9);
     
     // ── Halftone dithering ──
     float ht = halftone(gl_FragCoord.xy, gray);
@@ -111,9 +114,9 @@ const fragmentShader = `
     float scanline = sin(gl_FragCoord.y * 1.5) * 0.03 + 1.0;
     bwColor *= scanline;
     
-    // ── Cinematic vignette ──
-    float vignette = 1.0 - smoothstep(0.4, 1.4, length(uv - 0.5) * 1.8);
-    bwColor *= mix(0.7, 1.0, vignette);
+    // ── Subtle vignette ──
+    float vignette = 1.0 - smoothstep(0.5, 1.5, length(uv - 0.5) * 1.6);
+    bwColor *= mix(0.85, 1.0, vignette);
     
     // ── Flashlight reveal ──
     float revealDist = distance(uv, uMouse);
