@@ -65,7 +65,7 @@ const fragmentShader = `
     vec2 cellSize = vec2(uPixelSize * 1.5);
     vec2 cell = mod(coord, cellSize) / cellSize - 0.5;
     float dotDist = length(cell);
-    float dotRadius = (1.0 - gray) * 0.5;
+    float dotRadius = gray * 0.5;
     return smoothstep(dotRadius + 0.05, dotRadius - 0.05, dotDist);
   }
   
