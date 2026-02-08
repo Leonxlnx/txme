@@ -27,8 +27,14 @@ export default function Home() {
         className="h-full w-full"
       />
 
-      {/* ── Dark Overlay ── */}
-      <div className="pointer-events-none absolute inset-0 bg-black/40" />
+      {/* ── Dark Overlay: stronger center for text contrast ── */}
+      <div className="pointer-events-none absolute inset-0 bg-black/50" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 100%)",
+        }}
+      />
 
       {/* ── Content Layer ── */}
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between px-6 py-6 md:px-12 md:py-10">
