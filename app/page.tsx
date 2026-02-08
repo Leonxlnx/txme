@@ -349,11 +349,11 @@ export default function Home() {
         </div>
 
         {/* ── Hero diagonal fade (angled gradient, no transforms needed) ── */}
-        {/* 210deg = 30° diagonal, left fades higher, right stays visible longer */}
+        {/* 190deg = subtle 10° diagonal, left fades slightly higher */}
         <div
           className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-[70vh]"
           style={{
-            background: "linear-gradient(210deg, transparent 45%, rgba(0,0,0,0.15) 53%, rgba(0,0,0,0.4) 61%, rgba(0,0,0,0.75) 69%, black 80%)",
+            background: "linear-gradient(190deg, transparent 45%, rgba(0,0,0,0.15) 53%, rgba(0,0,0,0.4) 61%, rgba(0,0,0,0.75) 69%, black 80%)",
           }}
         />
         {/* Pixelated + grid along the diagonal */}
@@ -362,8 +362,8 @@ export default function Home() {
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ctext x='24' y='26' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='10' fill='rgba(255,255,255,0.13)'%3E%2B%3C/text%3E%3C/svg%3E")`,
             backgroundSize: "48px 48px",
-            maskImage: "linear-gradient(210deg, transparent 47%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.3) 65%, transparent 75%)",
-            WebkitMaskImage: "linear-gradient(210deg, transparent 47%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.3) 65%, transparent 75%)",
+            maskImage: "linear-gradient(190deg, transparent 47%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.3) 65%, transparent 75%)",
+            WebkitMaskImage: "linear-gradient(190deg, transparent 47%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.3) 65%, transparent 75%)",
           }}
         />
       </div>
