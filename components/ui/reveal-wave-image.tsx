@@ -60,13 +60,13 @@ const fragmentShader = `
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
   }
   
-  // Halftone dot pattern
+  // Plus/cross shaped halftone pattern
   float halftone(vec2 coord, float gray) {
-    vec2 cellSize = vec2(uPixelSize * 1.5);
+    vec2 cellSize = vec2(uPixelSize * 3.0);
     vec2 cell = mod(coord, cellSize) / cellSize - 0.5;
-    float dotDist = length(cell);
-    float dotRadius = gray * 0.5;
-    return smoothstep(dotRadius + 0.05, dotRadius - 0.05, dotDist);
+    float armWidth = gray * 0.45;
+    float crossDist = min(abs(cell.x), abs(cell.y));
+    return smoothstep(armWidth + 0.03, armWidth - 0.03, crossDist);
   }
   
   void main() {
