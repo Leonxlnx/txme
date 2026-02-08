@@ -120,7 +120,21 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Liquid metal pill border animation */
+@property --pill-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes pillSpin {
+  to {
+    --pill-angle: 360deg;
   }
 }

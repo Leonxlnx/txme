@@ -71,32 +71,28 @@ export default function Home() {
             className={`mb-6 transition-all duration-[1400ms] delay-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
               }`}
           >
-            <span
-              className="group/pill text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 px-6 py-2.5 rounded-full pointer-events-auto cursor-default hover:text-white/90 active:scale-[0.98] transition-all duration-500 relative overflow-hidden"
-              style={{
-                fontFamily: "var(--font-space)",
-                background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)";
-                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.2), 0 0 30px rgba(255,255,255,0.1), 0 0 60px rgba(255,255,255,0.04)";
-                e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 100%)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
-                e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 20px rgba(0,0,0,0.15)";
-                e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)";
-              }}
-            >
-              {/* Shine sweep on hover */}
-              <span className="absolute inset-0 opacity-0 group-hover/pill:opacity-100 pointer-events-none transition-opacity duration-500">
-                <span className="absolute inset-0 -translate-x-full group-hover/pill:translate-x-[200%] transition-transform duration-[800ms] ease-out bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            {/* Liquid Metal Pill */}
+            <span className="group/pill relative pointer-events-auto cursor-default active:scale-[0.98] transition-all duration-500 inline-block rounded-full p-[1px]">
+              {/* Animated gradient border (hidden by default, shown on hover) */}
+              <span
+                className="absolute inset-0 rounded-full opacity-0 group-hover/pill:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                  background: "conic-gradient(from var(--pill-angle), rgba(255,255,255,0.05), rgba(200,220,255,0.4), rgba(255,255,255,0.1), rgba(180,200,255,0.35), rgba(255,255,255,0.05))",
+                  animation: "pillSpin 3s linear infinite",
+                }}
+              />
+              {/* Inner content */}
+              <span
+                className="relative z-10 block text-[0.6rem] md:text-[0.7rem] tracking-[0.5em] uppercase text-white/60 group-hover/pill:text-white/90 px-6 py-2.5 rounded-full transition-all duration-500"
+                style={{
+                  fontFamily: "var(--font-space)",
+                  background: "linear-gradient(135deg, rgba(10,10,15,0.85) 0%, rgba(15,15,20,0.9) 100%)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                }}
+              >
+                Creative Studio for Digital Experiences
               </span>
-              <span className="relative z-10">Creative Studio for Digital Experiences</span>
             </span>
           </div>
 
