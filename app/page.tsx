@@ -348,34 +348,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Hero diagonal fade (left higher, right lower) ── */}
-        {/* bottom: -30rem ensures no gap even at steep skew angles */}
+        {/* ── Hero diagonal fade (angled gradient, no transforms needed) ── */}
+        {/* 195deg = left fades higher, right stays visible longer */}
         <div
-          className="pointer-events-none absolute z-20"
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-[65vh]"
           style={{
-            left: "-80%",
-            right: "-80%",
-            bottom: "-30rem",
-            height: "80rem",
-            transformOrigin: "center bottom",
-            transform: "skewY(15deg)",
-            background: "linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.4) 73%, rgba(0,0,0,0.75) 81%, black 89%)",
+            background: "linear-gradient(195deg, transparent 35%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.75) 65%, black 78%)",
           }}
         />
-        {/* Pixelated + grid inside hero */}
+        {/* Pixelated + grid along the diagonal */}
         <div
-          className="pointer-events-none absolute z-20 select-none"
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-[65vh] select-none"
           style={{
-            left: "-80%",
-            right: "-80%",
-            bottom: "-30rem",
-            height: "80rem",
-            transformOrigin: "center bottom",
-            transform: "skewY(15deg)",
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ctext x='24' y='26' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='10' fill='rgba(255,255,255,0.13)'%3E%2B%3C/text%3E%3C/svg%3E")`,
             backgroundSize: "48px 48px",
-            maskImage: "linear-gradient(to bottom, transparent 58%, rgba(0,0,0,0.45) 68%, rgba(0,0,0,0.3) 78%, transparent 88%)",
-            WebkitMaskImage: "linear-gradient(to bottom, transparent 58%, rgba(0,0,0,0.45) 68%, rgba(0,0,0,0.3) 78%, transparent 88%)",
+            maskImage: "linear-gradient(195deg, transparent 38%, rgba(0,0,0,0.5) 48%, rgba(0,0,0,0.3) 60%, transparent 72%)",
+            WebkitMaskImage: "linear-gradient(195deg, transparent 38%, rgba(0,0,0,0.5) 48%, rgba(0,0,0,0.3) 60%, transparent 72%)",
           }}
         />
       </div>
@@ -387,23 +375,6 @@ export default function Home() {
         ref={sectionRef}
         className="relative bg-black overflow-hidden"
       >
-        {/* + grid continuation from hero diagonal — extends into about section on right side */}
-        <div
-          className="pointer-events-none absolute z-10 select-none"
-          style={{
-            left: "-80%",
-            right: "-80%",
-            top: "-20rem",
-            height: "30rem",
-            transformOrigin: "center top",
-            transform: "skewY(15deg)",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ctext x='24' y='26' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='10' fill='rgba(255,255,255,0.08)'%3E%2B%3C/text%3E%3C/svg%3E")`,
-            backgroundSize: "48px 48px",
-            maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.15) 50%, transparent 80%)",
-            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.15) 50%, transparent 80%)",
-          }}
-        />
-
         {/* Grain texture */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.025]"
