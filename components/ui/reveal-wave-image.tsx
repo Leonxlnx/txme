@@ -39,6 +39,11 @@ const fragmentShader = `
   uniform float uWaveFrequency;
   uniform float uWaveAmplitude;
   uniform float uMouseRadius;
+
+  // Click Wave Uniforms
+  uniform vec2 uClickPos;
+  uniform float uClickTime;
+  uniform float uClickDuration;
   
   varying vec2 vUv;
   
@@ -77,7 +82,7 @@ const fragmentShader = `
     vec2 uv = vUv;
     float time = uTime;
     
-    // ── Simple sine waves ──
+    // ── Distortions ──
     float waveStrength = uWaveAmplitude * 0.1;
     float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStrength;
     float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStrength * 0.5;
@@ -86,53 +91,51 @@ const fragmentShader = `
     distortedUv.x += wave1;
     distortedUv.y += wave2;
     
-    // ── Mouse interaction (Ripple) ──
+    // Hover Distortion (No Color Reveal anymore)
     if (uMouseActive > 0.01) {
-        vec2 mousePos = uMouse;
-        float dist = distance(uv, mousePos);
+        float dist = distance(uv, uMouse);
         float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
+        float hoverDistort = sin(dist * 10.0 - time * 2.0) * 0.02 * mouseInfluence * uMouseActive;
+        distortedUv += normalize(uv - uMouse + 0.0001) * hoverDistort;
+    }
+
+    // Click Ripple Distortion & Reveal
+    float clickElapsed = time - uClickTime;
+    float clickProgress = clamp(clickElapsed / uClickDuration, 0.0, 1.0);
+    float revealAmount = 0.0;
+    
+    if (clickProgress > 0.0 && clickProgress < 1.0) {
+        float clickDist = distance(uv, uClickPos);
+        float waveRadius = clickProgress * 1.5; // Expanding circle
+        float waveInner = waveRadius - 0.2;
+        float waveOuter = waveRadius;
         
-        float rippleFreq = uWaveFrequency * 5.0;
-        float rippleSpeed = uWaveSpeed * 1.0;
-        float rippleStrength = uWaveAmplitude * 0.05;
+        // The wave itself causes extra distortion
+        float waveStrength = (1.0 - clickProgress) * 0.05;
+        float waveFactor = smoothstep(waveInner, waveOuter, clickDist) * smoothstep(waveOuter + 0.1, waveOuter, clickDist);
+        distortedUv += normalize(uv - uClickPos + 0.0001) * waveFactor * waveStrength;
         
-        float ripple = sin(dist * rippleFreq - time * rippleSpeed) * rippleStrength * mouseInfluence * uMouseActive;
-        distortedUv.x += ripple;
-        distortedUv.y += ripple;
+        // Reveal Logic: Everything inside the wave becomes colored temporarily
+        revealAmount = smoothstep(waveOuter, waveInner, clickDist) * (1.0 - clickProgress);
     }
     
-    // Sampling and Color Logic
-    vec4 color = texture2D(uTexture, distortedUv);
-    
-    // Grayscale conversion
-    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+    vec4 texColor = texture2D(uTexture, distortedUv);
+    float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
     
     // Dithering
     vec2 pixelCoord = floor(gl_FragCoord.xy / uPixelSize);
     float dither = bayer4x4(pixelCoord);
     
-    // Quantization (2rd version contrast)
     float quantized;
     float adjusted = gray + (dither - 0.5) * 0.6;
-    if (adjusted < 0.33) {
-        quantized = 0.0;
-    } else if (adjusted < 0.66) {
-        quantized = 0.5;
-    } else {
-        quantized = 1.0;
-    }
+    if (adjusted < 0.33) quantized = 0.0;
+    else if (adjusted < 0.66) quantized = 0.5;
+    else quantized = 1.0;
+    
     vec3 bwColor = vec3(quantized);
+    vec3 finalColor = mix(bwColor, texColor.rgb, revealAmount);
     
-    // Reveal Flashlight
-    float revealDist = distance(uv, uMouse);
-    float innerRadius = uRevealRadius * (1.0 - uRevealSoftness);
-    float outerRadius = uRevealRadius;
-    float revealAmount = 1.0 - smoothstep(innerRadius, outerRadius, revealDist);
-    revealAmount *= uMouseActive;
-    
-    vec3 finalColor = mix(bwColor, color.rgb, revealAmount);
-    
-    gl_FragColor = vec4(finalColor, color.a);
+    gl_FragColor = vec4(finalColor, texColor.a);
   }
 `;
 
@@ -147,6 +150,7 @@ interface ImagePlaneProps {
     waveAmplitude: number;
     mouseRadius: number;
     isMouseInCanvas: boolean;
+    clickState: { pos: THREE.Vector2; time: number };
 }
 
 function ImagePlane({
@@ -160,6 +164,7 @@ function ImagePlane({
     waveAmplitude,
     mouseRadius,
     isMouseInCanvas,
+    clickState,
 }: ImagePlaneProps) {
     const texture = useTexture(src);
     const meshRef = useRef<THREE.Mesh>(null);
@@ -180,6 +185,9 @@ function ImagePlane({
             uWaveFrequency: { value: waveFrequency },
             uWaveAmplitude: { value: waveAmplitude },
             uMouseRadius: { value: mouseRadius },
+            uClickPos: { value: new THREE.Vector2(-10, -10) },
+            uClickTime: { value: -100 },
+            uClickDuration: { value: 1.5 },
         }),
         [
             texture,
@@ -194,28 +202,22 @@ function ImagePlane({
     );
 
     const scale = useMemo<[number, number, number]>(() => {
-        // Canvas clip-space is square (-1..1)
-        if (aspectRatio > 1) {
-            // Image is wider than tall
-            return [aspectRatio, 1, 1];
-        } else {
-            // Image is taller than wide
-            return [1, 1 / aspectRatio, 1];
-        }
+        if (aspectRatio > 1) return [aspectRatio * 2, 2, 1];
+        return [2, 2 / aspectRatio, 1];
     }, [aspectRatio]);
+
     useFrame((state) => {
         if (meshRef.current) {
             const material = meshRef.current.material as THREE.ShaderMaterial;
             material.uniforms.uTime.value = state.clock.elapsedTime;
+            material.uniforms.uClickPos.value.copy(clickState.pos);
+            material.uniforms.uClickTime.value = clickState.time;
 
-            if (isMouseInCanvas) {
-                hasEnteredRef.current = true;
-            }
+            if (isMouseInCanvas) hasEnteredRef.current = true;
 
             const targetActive = isMouseInCanvas ? 1 : 0;
             const easingSpeed = 0.08;
-            mouseActiveRef.current +=
-                (targetActive - mouseActiveRef.current) * easingSpeed;
+            mouseActiveRef.current += (targetActive - mouseActiveRef.current) * easingSpeed;
             material.uniforms.uMouseActive.value = mouseActiveRef.current;
 
             if (hasEnteredRef.current) {
@@ -229,11 +231,12 @@ function ImagePlane({
 
     return (
         <mesh ref={meshRef} scale={scale}>
-            <planeGeometry args={[2, 2]} />
+            <planeGeometry args={[1, 1]} />
             <shaderMaterial
                 vertexShader={vertexShader}
                 fragmentShader={fragmentShader}
                 uniforms={uniforms}
+                transparent
             />
         </mesh>
     );
@@ -263,21 +266,11 @@ export const RevealWaveImage = ({
     className = "h-full w-full",
 }: RevealWaveImageProps) => {
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
-    const [aspectRatio, setAspectRatio] = useState(16 / 9);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+    const [clickState, setClickState] = useState({ pos: new THREE.Vector2(-10, -10), time: -100 });
 
     useEffect(() => {
-        // Use viewport aspect ratio as immediate fallback
-        if (containerRef.current) {
-            const rect = containerRef.current.getBoundingClientRect();
-            if (rect.width > 0 && rect.height > 0) {
-                setAspectRatio(rect.width / rect.height);
-            }
-        }
-
-        // Then load the actual image aspect ratio
-        const img = document.createElement("img");
-        img.crossOrigin = "anonymous";
+        const img = new Image();
         img.src = src;
         img.onload = () => {
             setAspectRatio(img.naturalWidth / img.naturalHeight);
@@ -286,35 +279,37 @@ export const RevealWaveImage = ({
 
     return (
         <div
-            ref={containerRef}
-            className={`relative overflow-hidden ${className}`}
+            className={`relative overflow-hidden cursor-crosshair ${className}`}
             onMouseEnter={() => setIsMouseInCanvas(true)}
             onMouseLeave={() => setIsMouseInCanvas(false)}
+            onClickCapture={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = 1.0 - (e.clientY - rect.top) / rect.height;
+                setClickState({ pos: new THREE.Vector2(x, y), time: performance.now() / 1000 });
+            }}
         >
-            <Canvas
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "block",
-                    position: "absolute",
-                    inset: 0,
-                }}
-                gl={{ antialias: false }}
-                camera={{ position: [0, 0, 1] }}
-            >
-                <ImagePlane
-                    src={src}
-                    aspectRatio={aspectRatio}
-                    revealRadius={revealRadius}
-                    revealSoftness={revealSoftness}
-                    pixelSize={pixelSize}
-                    waveSpeed={waveSpeed}
-                    waveFrequency={waveFrequency}
-                    waveAmplitude={waveAmplitude}
-                    mouseRadius={mouseRadius}
-                    isMouseInCanvas={isMouseInCanvas}
-                />
-            </Canvas>
+            {aspectRatio !== null && (
+                <Canvas
+                    style={{ width: "100%", height: "100%", display: "block" }}
+                    gl={{ antialias: false }}
+                    camera={{ position: [0, 0, 1] }}
+                >
+                    <ImagePlane
+                        src={src}
+                        aspectRatio={aspectRatio}
+                        revealRadius={revealRadius}
+                        revealSoftness={revealSoftness}
+                        pixelSize={pixelSize}
+                        waveSpeed={waveSpeed}
+                        waveFrequency={waveFrequency}
+                        waveAmplitude={waveAmplitude}
+                        mouseRadius={mouseRadius}
+                        isMouseInCanvas={isMouseInCanvas}
+                        clickState={clickState}
+                    />
+                </Canvas>
+            )}
         </div>
     );
 };
