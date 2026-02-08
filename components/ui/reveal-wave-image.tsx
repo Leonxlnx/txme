@@ -42,80 +42,97 @@ const fragmentShader = `
   
   varying vec2 vUv;
   
-  // Custom 8x8 Cluster Dot Dithering for a more high-end 'printed' look
-  float cluster8x8(vec2 pos) {
-    int x = int(mod(pos.x, 8.0));
-    int y = int(mod(pos.y, 8.0));
-    int index = x + y * 8;
+  // Bayer 4x4 dithering pattern
+  float bayer4x4(vec2 pos) {
+    int x = int(mod(pos.x, 4.0));
+    int y = int(mod(pos.y, 4.0));
+    int index = x + y * 4;
     
-    // Cluster pattern table
-    float p[64];
-    p[0]=0.73; p[1]=0.84; p[2]=0.89; p[3]=0.83; p[4]=0.72; p[5]=0.55; p[6]=0.47; p[7]=0.53;
-    p[8]=0.86; p[9]=0.95; p[10]=0.98; p[11]=0.94; p[12]=0.81; p[13]=0.34; p[14]=0.22; p[15]=0.31;
-    p[16]=0.91; p[17]=1.00; p[18]=0.97; p[19]=0.88; p[20]=0.69; p[21]=0.19; p[22]=0.02; p[23]=0.16;
-    p[24]=0.78; p[25]=0.92; p[26]=0.77; p[27]=0.63; p[28]=0.44; p[29]=0.27; p[30]=0.09; p[31]=0.25;
-    p[32]=0.61; p[33]=0.42; p[34]=0.28; p[35]=0.11; p[36]=0.24; p[37]=0.59; p[38]=0.75; p[39]=0.90;
-    p[40]=0.39; p[41]=0.13; p[42]=0.00; p[43]=0.14; p[44]=0.38; p[45]=0.70; p[46]=0.93; p[47]=0.99;
-    p[48]=0.48; p[49]=0.20; p[50]=0.03; p[51]=0.17; p[52]=0.45; p[53]=0.80; p[54]=0.96; p[55]=0.87;
-    p[56]=0.56; p[57]=0.36; p[58]=0.23; p[59]=0.33; p[60]=0.58; p[61]=0.71; p[62]=0.85; p[63]=0.74;
-
-    for (int i = 0; i < 64; i++) {
-        if (i == index) return p[i];
-    }
-    return 0.0;
+    float pattern[16];
+    pattern[0] = 0.0;    pattern[1] = 8.0;    pattern[2] = 2.0;    pattern[3] = 10.0;
+    pattern[4] = 12.0;   pattern[5] = 4.0;    pattern[6] = 14.0;   pattern[7] = 6.0;
+    pattern[8] = 3.0;    pattern[9] = 11.0;   pattern[10] = 1.0;   pattern[11] = 9.0;
+    pattern[12] = 15.0;  pattern[13] = 7.0;   pattern[14] = 13.0;  pattern[15] = 5.0;
+    
+    // Manual index lookup for GLSL 1.0 compatibility
+    if (index == 0) return pattern[0] / 16.0;
+    if (index == 1) return pattern[1] / 16.0;
+    if (index == 2) return pattern[2] / 16.0;
+    if (index == 3) return pattern[3] / 16.0;
+    if (index == 4) return pattern[4] / 16.0;
+    if (index == 5) return pattern[5] / 16.0;
+    if (index == 6) return pattern[6] / 16.0;
+    if (index == 7) return pattern[7] / 16.0;
+    if (index == 8) return pattern[8] / 16.0;
+    if (index == 9) return pattern[9] / 16.0;
+    if (index == 10) return pattern[10] / 16.0;
+    if (index == 11) return pattern[11] / 16.0;
+    if (index == 12) return pattern[12] / 16.0;
+    if (index == 13) return pattern[13] / 16.0;
+    if (index == 14) return pattern[14] / 16.0;
+    return pattern[15] / 16.0;
   }
   
   void main() {
     vec2 uv = vUv;
     float time = uTime;
     
-    // ── Compound Wave Motion (Dynamic & Unique) ──
-    float w1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * 0.6;
-    float w2 = sin(uv.x * uWaveFrequency * 0.8 - time * uWaveSpeed * 0.7) * 0.4;
-    float w3 = sin((uv.x + uv.y) * uWaveFrequency * 0.5 + time * uWaveSpeed * 1.2) * 0.3;
+    // ── Simple sine waves ──
+    float waveStrength = uWaveAmplitude * 0.1;
+    float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStrength;
+    float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStrength * 0.5;
     
-    float totalWave = (w1 + w2 + w3) * uWaveAmplitude * 0.1;
-    vec2 distortedUv = uv + vec2(totalWave, totalWave * 0.5);
+    vec2 distortedUv = uv;
+    distortedUv.x += wave1;
+    distortedUv.y += wave2;
     
-    // ── Interaction Ripple (Enhanced) ──
+    // ── Mouse interaction (Ripple) ──
     if (uMouseActive > 0.01) {
-        float dist = distance(uv, uMouse);
-        float ripple = sin(dist * uWaveFrequency * 6.0 - time * uWaveSpeed * 3.0);
-        distortedUv += normalize(uv - uMouse + 0.001) * ripple * uWaveAmplitude * 0.04 * smoothstep(uMouseRadius, 0.0, dist) * uMouseActive;
+        vec2 mousePos = uMouse;
+        float dist = distance(uv, mousePos);
+        float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
+        
+        float rippleFreq = uWaveFrequency * 5.0;
+        float rippleSpeed = uWaveSpeed * 1.0;
+        float rippleStrength = uWaveAmplitude * 0.05;
+        
+        float ripple = sin(dist * rippleFreq - time * rippleSpeed) * rippleStrength * mouseInfluence * uMouseActive;
+        distortedUv.x += ripple;
+        distortedUv.y += ripple;
     }
     
-    // ── Grayscale & Contrast ──
-    vec4 texColor = texture2D(uTexture, distortedUv);
-    float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
-    gray = smoothstep(-0.05, 1.05, gray); // Slightly boost dynamic range
+    // Sampling and Color Logic
+    vec4 color = texture2D(uTexture, distortedUv);
     
-    // ── Temporal Cluster Dither ──
-    // We add a tiny 'jitter' based on time to make the dither feel alive
-    float jitter = (fract(sin(time * 60.0) * 43758.5453) - 0.5) * 0.015;
-    vec2 pixelCoord = gl_FragCoord.xy / uPixelSize;
-    float ditherVal = cluster8x8(pixelCoord);
+    // Grayscale conversion
+    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     
-    float limit = ditherVal + jitter;
-    float quantized = gray > limit ? 1.0 : (gray > limit * 0.5 ? 0.5 : 0.0);
+    // Dithering
+    vec2 pixelCoord = floor(gl_FragCoord.xy / uPixelSize);
+    float dither = bayer4x4(pixelCoord);
+    
+    // Quantization (2rd version contrast)
+    float quantized;
+    float adjusted = gray + (dither - 0.5) * 0.6;
+    if (adjusted < 0.33) {
+        quantized = 0.0;
+    } else if (adjusted < 0.66) {
+        quantized = 0.5;
+    } else {
+        quantized = 1.0;
+    }
     vec3 bwColor = vec3(quantized);
     
-    // ── Reveal with Chromatic Aberration ──
+    // Reveal Flashlight
     float revealDist = distance(uv, uMouse);
-    float edge = smoothstep(uRevealRadius, uRevealRadius * (1.0 - uRevealSoftness), revealDist) * uMouseActive;
+    float innerRadius = uRevealRadius * (1.0 - uRevealSoftness);
+    float outerRadius = uRevealRadius;
+    float revealAmount = 1.0 - smoothstep(innerRadius, outerRadius, revealDist);
+    revealAmount *= uMouseActive;
     
-    // Sample channels separately for a tiny color fringe on the reveal edge
-    float shift = 0.003 * edge;
-    vec3 colorLow = texture2D(uTexture, distortedUv + vec2(shift, 0.0)).rgb;
-    vec3 colorMid = texture2D(uTexture, distortedUv).rgb;
-    vec3 colorHigh = texture2D(uTexture, distortedUv - vec2(shift, 0.0)).rgb;
-    vec3 revealColor = vec3(colorLow.r, colorMid.g, colorHigh.b);
+    vec3 finalColor = mix(bwColor, color.rgb, revealAmount);
     
-    vec3 finalColor = mix(bwColor, revealColor, edge);
-    
-    // Subtle scanline overlay for texture
-    finalColor *= 0.97 + 0.03 * sin(gl_FragCoord.y * 1.5);
-    
-    gl_FragColor = vec4(finalColor, texColor.a);
+    gl_FragColor = vec4(finalColor, color.a);
   }
 `;
 
