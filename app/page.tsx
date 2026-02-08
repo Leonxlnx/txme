@@ -348,29 +348,25 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Hero bottom fade to black ── */}
-        {/* Base: straight short fade at the very bottom */}
+        {/* ── Hero bottom fade: diagonal via skewY (left higher, right lower) ── */}
         <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-24 md:h-32"
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-56 md:h-72"
           style={{
-            background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 50%, black 100%)",
+            transformOrigin: "top left",
+            transform: "skewY(-5deg)",
+            background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0.75) 60%, black 85%)",
           }}
         />
-        {/* Diagonal layer: slightly taller on left, shorter on right */}
+        {/* + grid overlay with same skew */}
         <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-40 md:h-52"
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-44 md:h-56 select-none"
           style={{
-            background: "linear-gradient(178deg, transparent 55%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.7) 85%, black 100%)",
-          }}
-        />
-        {/* + grid overlay */}
-        <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-28 md:h-36 select-none"
-          style={{
+            transformOrigin: "top left",
+            transform: "skewY(-5deg)",
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ctext x='18' y='20' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='7' fill='rgba(255,255,255,0.12)'%3E%2B%3C/text%3E%3C/svg%3E")`,
             backgroundSize: "36px 36px",
-            maskImage: "linear-gradient(178deg, transparent 60%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0.3) 90%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(178deg, transparent 60%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0.3) 90%, transparent 100%)",
+            maskImage: "linear-gradient(to bottom, transparent 10%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,0.3) 70%, transparent 95%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 10%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,0.3) 70%, transparent 95%)",
           }}
         />
       </div>
