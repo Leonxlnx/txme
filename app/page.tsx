@@ -23,6 +23,9 @@ export default function Home() {
         mouseRadius={0.4}
         className="h-full w-full"
       />
+
+      {/* Dark overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-black/25" />
     </div>
   );
 }
