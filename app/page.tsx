@@ -25,7 +25,7 @@ export default function Home() {
       />
 
       {/* Dark overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-black/25" />
+      <div className="pointer-events-none absolute inset-0 bg-black/40" />
     </div>
   );
 }
