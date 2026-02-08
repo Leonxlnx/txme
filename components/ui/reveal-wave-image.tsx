@@ -151,6 +151,7 @@ interface ImagePlaneProps {
     mouseRadius: number;
     isMouseInCanvas: boolean;
     clickState: { pos: THREE.Vector2; time: number };
+    clockRef: React.MutableRefObject<number>;
 }
 
 function ImagePlane({
@@ -165,6 +166,7 @@ function ImagePlane({
     mouseRadius,
     isMouseInCanvas,
     clickState,
+    clockRef,
 }: ImagePlaneProps) {
     const texture = useTexture(src);
     const meshRef = useRef<THREE.Mesh>(null);
@@ -209,7 +211,9 @@ function ImagePlane({
     useFrame((state) => {
         if (meshRef.current) {
             const material = meshRef.current.material as THREE.ShaderMaterial;
-            material.uniforms.uTime.value = state.clock.elapsedTime;
+            const elapsed = state.clock.elapsedTime;
+            material.uniforms.uTime.value = elapsed;
+            clockRef.current = elapsed;
             material.uniforms.uClickPos.value.copy(clickState.pos);
             material.uniforms.uClickTime.value = clickState.time;
 
@@ -268,6 +272,7 @@ export const RevealWaveImage = ({
     const [isMouseInCanvas, setIsMouseInCanvas] = useState(false);
     const [aspectRatio, setAspectRatio] = useState<number | null>(null);
     const [clickState, setClickState] = useState({ pos: new THREE.Vector2(-10, -10), time: -100 });
+    const clockRef = useRef(0);
 
     useEffect(() => {
         const img = new Image();
@@ -286,7 +291,7 @@ export const RevealWaveImage = ({
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = (e.clientX - rect.left) / rect.width;
                 const y = 1.0 - (e.clientY - rect.top) / rect.height;
-                setClickState({ pos: new THREE.Vector2(x, y), time: performance.now() / 1000 });
+                setClickState({ pos: new THREE.Vector2(x, y), time: clockRef.current });
             }}
         >
             {aspectRatio !== null && (
@@ -307,6 +312,7 @@ export const RevealWaveImage = ({
                         mouseRadius={mouseRadius}
                         isMouseInCanvas={isMouseInCanvas}
                         clickState={clickState}
+                        clockRef={clockRef}
                     />
                 </Canvas>
             )}
