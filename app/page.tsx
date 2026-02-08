@@ -6,6 +6,7 @@ import { Instagram, Github } from "lucide-react";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
+  const [btnHover, setBtnHover] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 200);
@@ -113,7 +114,7 @@ export default function Home() {
             style={{ fontFamily: "var(--font-syne)" }}
           >
             <span
-              className="block text-[clamp(3.5rem,15vw,12rem)] font-extrabold tracking-[-0.04em] drop-shadow-[0_4px_40px_rgba(0,0,0,0.6)]"
+              className="block text-[clamp(3.5rem,15vw,12rem)] font-extrabold tracking-[-0.04em] drop-shadow-[0_4px_40px_rgba(0,0,0,0.6)] transition-[filter] duration-[800ms] ease-out"
               style={{
                 backgroundImage: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80')",
                 backgroundSize: "cover",
@@ -122,6 +123,7 @@ export default function Home() {
                 backgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 color: "transparent",
+                filter: btnHover ? "grayscale(0)" : "grayscale(1)",
               }}
             >
               TXME
@@ -162,9 +164,11 @@ export default function Home() {
                 boxShadow: "0 4px 24px rgba(255,255,255,0.1)",
               }}
               onMouseEnter={(e) => {
+                setBtnHover(true);
                 e.currentTarget.style.boxShadow = "0 12px 50px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
+                setBtnHover(false);
                 e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.1)";
               }}
             >
@@ -188,11 +192,13 @@ export default function Home() {
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
               onMouseEnter={(e) => {
+                setBtnHover(true);
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
                 e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 40px rgba(255,255,255,0.08), 0 0 30px rgba(255,255,255,0.04)";
                 e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%), rgba(10,10,12,0.35)";
               }}
               onMouseLeave={(e) => {
+                setBtnHover(false);
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
                 e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)";
                 e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%), rgba(10,10,12,0.35)";
