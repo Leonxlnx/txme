@@ -80,12 +80,12 @@ export default function Home() {
                   border: "1px solid rgba(255,255,255,0.12)",
                 }}
               />
-              {/* Metallic border on hover */}
+              {/* Soft glow border on hover */}
               <span
                 className="absolute inset-0 rounded-full opacity-0 group-hover/pill:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  border: "1px solid rgba(180,200,220,0.45)",
-                  boxShadow: "0 0 12px rgba(180,200,220,0.12), inset 0 0 8px rgba(180,200,220,0.06)",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  boxShadow: "0 0 16px rgba(255,255,255,0.08), 0 0 4px rgba(255,255,255,0.06)",
                 }}
               />
               {/* Inner content */}
