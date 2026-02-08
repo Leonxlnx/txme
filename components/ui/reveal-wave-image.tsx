@@ -42,94 +42,95 @@ const fragmentShader = `
   
   varying vec2 vUv;
   
-  // Simplex-style noise for organic movement
-  float hash(vec2 p) {
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
-  }
-  
-  float noise(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
+  // Bayer 4x4 dithering pattern
+  float bayer4x4(vec2 pos) {
+    int x = int(mod(pos.x, 4.0));
+    int y = int(mod(pos.y, 4.0));
+    int index = x + y * 4;
     
-    float a = hash(i);
-    float b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0));
-    float d = hash(i + vec2(1.0, 1.0));
+    float pattern[16];
+    pattern[0] = 0.0;    pattern[1] = 8.0;    pattern[2] = 2.0;    pattern[3] = 10.0;
+    pattern[4] = 12.0;   pattern[5] = 4.0;    pattern[6] = 14.0;   pattern[7] = 6.0;
+    pattern[8] = 3.0;    pattern[9] = 11.0;   pattern[10] = 1.0;   pattern[11] = 9.0;
+    pattern[12] = 15.0;  pattern[13] = 7.0;   pattern[14] = 13.0;  pattern[15] = 5.0;
     
-    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
-  }
-  
-  // Mini plus (+) pattern
-  float halftone(vec2 coord, float gray) {
-    vec2 cellSize = vec2(uPixelSize * 2.5);
-    vec2 cell = mod(coord, cellSize) / cellSize - 0.5;
-    float armThick = 0.08;
-    float armLen = gray * 0.42;
-    float hBar = step(abs(cell.y), armThick) * step(abs(cell.x), armLen);
-    float vBar = step(abs(cell.x), armThick) * step(abs(cell.y), armLen);
-    return max(hBar, vBar);
+    // Manual index lookup for GLSL 1.0 compatibility
+    if (index == 0) return pattern[0] / 16.0;
+    if (index == 1) return pattern[1] / 16.0;
+    if (index == 2) return pattern[2] / 16.0;
+    if (index == 3) return pattern[3] / 16.0;
+    if (index == 4) return pattern[4] / 16.0;
+    if (index == 5) return pattern[5] / 16.0;
+    if (index == 6) return pattern[6] / 16.0;
+    if (index == 7) return pattern[7] / 16.0;
+    if (index == 8) return pattern[8] / 16.0;
+    if (index == 9) return pattern[9] / 16.0;
+    if (index == 10) return pattern[10] / 16.0;
+    if (index == 11) return pattern[11] / 16.0;
+    if (index == 12) return pattern[12] / 16.0;
+    if (index == 13) return pattern[13] / 16.0;
+    if (index == 14) return pattern[14] / 16.0;
+    return pattern[15] / 16.0;
   }
   
   void main() {
     vec2 uv = vUv;
     float time = uTime;
     
-    // ── Organic noise-based waves (3 layers) ──
-    float n1 = noise(uv * uWaveFrequency * 2.0 + time * uWaveSpeed * 0.3);
-    float n2 = noise(uv * uWaveFrequency * 4.0 - time * uWaveSpeed * 0.2 + 50.0);
-    float n3 = noise(uv * uWaveFrequency * 1.0 + time * uWaveSpeed * 0.15 + 100.0);
+    // ── Simple sine waves ──
+    float waveStrength = uWaveAmplitude * 0.1;
+    float wave1 = sin(uv.y * uWaveFrequency + time * uWaveSpeed) * waveStrength;
+    float wave2 = sin(uv.x * uWaveFrequency * 0.7 + time * uWaveSpeed * 0.8) * waveStrength * 0.5;
     
-    float waveStrength = uWaveAmplitude * 0.06;
     vec2 distortedUv = uv;
-    distortedUv.x += (n1 - 0.5) * waveStrength + (n3 - 0.5) * waveStrength * 0.5;
-    distortedUv.y += (n2 - 0.5) * waveStrength + sin(uv.x * 8.0 + time * uWaveSpeed * 0.5) * waveStrength * 0.3;
+    distortedUv.x += wave1;
+    distortedUv.y += wave2;
     
-    // ── Mouse ripple with organic distortion ──
+    // ── Mouse interaction (Ripple) ──
     if (uMouseActive > 0.01) {
-      vec2 mousePos = uMouse;
-      float dist = distance(uv, mousePos);
-      float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
-      
-      float ripple = sin(dist * uWaveFrequency * 8.0 - time * uWaveSpeed * 2.0);
-      ripple *= uWaveAmplitude * 0.03 * mouseInfluence * uMouseActive;
-      
-      vec2 dir = normalize(uv - mousePos + 0.001);
-      distortedUv += dir * ripple;
+        vec2 mousePos = uMouse;
+        float dist = distance(uv, mousePos);
+        float mouseInfluence = smoothstep(uMouseRadius, 0.0, dist);
+        
+        float rippleFreq = uWaveFrequency * 5.0;
+        float rippleSpeed = uWaveSpeed * 1.0;
+        float rippleStrength = uWaveAmplitude * 0.05;
+        
+        float ripple = sin(dist * rippleFreq - time * rippleSpeed) * rippleStrength * mouseInfluence * uMouseActive;
+        distortedUv.x += ripple;
+        distortedUv.y += ripple;
     }
     
-    // ── Sample texture ──
+    // Sampling and Color Logic
     vec4 color = texture2D(uTexture, distortedUv);
+    
+    // Grayscale conversion
     float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     
-    // ── Restored punchy contrast ──
-    gray = smoothstep(0.1, 0.85, gray);
-    gray = pow(gray, 1.2);
+    // Dithering
+    vec2 pixelCoord = floor(gl_FragCoord.xy / uPixelSize);
+    float dither = bayer4x4(pixelCoord);
     
-    // ── Halftone dithering ──
-    float ht = halftone(gl_FragCoord.xy, gray);
-    vec3 bwColor = vec3(ht);
+    // Quantization (2rd version contrast)
+    float quantized;
+    float adjusted = gray + (dither - 0.5) * 0.6;
+    if (adjusted < 0.33) {
+        quantized = 0.0;
+    } else if (adjusted < 0.66) {
+        quantized = 0.5;
+    } else {
+        quantized = 1.0;
+    }
+    vec3 bwColor = vec3(quantized);
     
-    // ── Subtle CRT scanlines ──
-    float scanline = sin(gl_FragCoord.y * 1.5) * 0.03 + 1.0;
-    bwColor *= scanline;
-    
-    // ── Subtle vignette ──
-    float vignette = 1.0 - smoothstep(0.5, 1.5, length(uv - 0.5) * 1.6);
-    bwColor *= mix(0.85, 1.0, vignette);
-    
-    // ── Flashlight reveal ──
+    // Reveal Flashlight
     float revealDist = distance(uv, uMouse);
     float innerRadius = uRevealRadius * (1.0 - uRevealSoftness);
     float outerRadius = uRevealRadius;
     float revealAmount = 1.0 - smoothstep(innerRadius, outerRadius, revealDist);
     revealAmount *= uMouseActive;
     
-    // Revealed area: smooth original color with slight film grain
-    float grain = (hash(uv * 500.0 + time) - 0.5) * 0.04;
-    vec3 revealColor = color.rgb + grain;
-    
-    vec3 finalColor = mix(bwColor, revealColor, revealAmount);
+    vec3 finalColor = mix(bwColor, color.rgb, revealAmount);
     
     gl_FragColor = vec4(finalColor, color.a);
   }
