@@ -349,31 +349,33 @@ export default function Home() {
         </div>
 
         {/* ── Hero diagonal fade (left higher, right lower) ── */}
-        {/* Extends beyond viewport edges to avoid gap artifacts at skew corners */}
+        {/* Massively oversized + skewed to avoid ANY edge gaps */}
         <div
-          className="pointer-events-none absolute bottom-0 z-20"
+          className="pointer-events-none absolute z-20"
           style={{
-            left: "-30%",
-            right: "-30%",
-            height: "16rem",
+            left: "-80%",
+            right: "-80%",
+            bottom: "-5rem",
+            height: "50rem",
             transformOrigin: "center bottom",
-            transform: "skewY(8deg)",
-            background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.25) 30%, rgba(0,0,0,0.6) 55%, rgba(0,0,0,0.9) 75%, black 92%)",
+            transform: "skewY(15deg)",
+            background: "linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.5) 78%, rgba(0,0,0,0.85) 86%, black 93%)",
           }}
         />
-        {/* + grid with same diagonal */}
+        {/* Pixelated + grid — bigger, bolder pattern */}
         <div
-          className="pointer-events-none absolute bottom-0 z-20 select-none"
+          className="pointer-events-none absolute z-20 select-none"
           style={{
-            left: "-30%",
-            right: "-30%",
-            height: "13rem",
+            left: "-80%",
+            right: "-80%",
+            bottom: "-5rem",
+            height: "50rem",
             transformOrigin: "center bottom",
-            transform: "skewY(8deg)",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ctext x='16' y='18' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='7' fill='rgba(255,255,255,0.08)'%3E%2B%3C/text%3E%3C/svg%3E")`,
-            backgroundSize: "32px 32px",
-            maskImage: "linear-gradient(to bottom, transparent 10%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.25) 65%, transparent 90%)",
-            WebkitMaskImage: "linear-gradient(to bottom, transparent 10%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.25) 65%, transparent 90%)",
+            transform: "skewY(15deg)",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ctext x='24' y='26' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='10' fill='rgba(255,255,255,0.13)'%3E%2B%3C/text%3E%3C/svg%3E")`,
+            backgroundSize: "48px 48px",
+            maskImage: "linear-gradient(to bottom, transparent 62%, rgba(0,0,0,0.5) 72%, rgba(0,0,0,0.3) 82%, transparent 92%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 62%, rgba(0,0,0,0.5) 72%, rgba(0,0,0,0.3) 82%, transparent 92%)",
           }}
         />
       </div>
