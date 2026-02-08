@@ -348,21 +348,30 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Hero bottom fade to black ── */}
+        {/* ── Hero bottom fade to black (diagonal: left higher, right lower) ── */}
         <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-28 md:h-36"
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-44 md:h-56"
           style={{
-            background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.9) 75%, black 100%)",
+            background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0.95) 80%, black 100%)",
+            clipPath: "polygon(0 15%, 100% 65%, 100% 100%, 0 100%)",
           }}
         />
-        {/* + grid overlay fading out at hero bottom */}
+        {/* Second subtle layer for the very bottom edge (full width) */}
         <div
-          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-24 md:h-32 select-none"
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-10 md:h-14"
+          style={{
+            background: "linear-gradient(to bottom, transparent 0%, black 100%)",
+          }}
+        />
+        {/* + grid overlay following the diagonal */}
+        <div
+          className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-32 md:h-40 select-none"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ctext x='18' y='20' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-size='7' fill='rgba(255,255,255,0.12)'%3E%2B%3C/text%3E%3C/svg%3E")`,
             backgroundSize: "36px 36px",
-            maskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.3) 75%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.3) 75%, transparent 100%)",
+            clipPath: "polygon(0 0%, 100% 55%, 100% 100%, 0 100%)",
+            maskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.3) 75%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30%, rgba(0,0,0,0.3) 75%, transparent 100%)",
           }}
         />
       </div>
