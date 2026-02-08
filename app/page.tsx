@@ -115,7 +115,7 @@ export default function Home() {
             <span
               className="block text-[clamp(3.5rem,15vw,12rem)] font-extrabold tracking-[-0.04em] drop-shadow-[0_4px_40px_rgba(0,0,0,0.6)]"
               style={{
-                backgroundImage: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80')",
+                backgroundImage: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80')",
                 backgroundSize: "cover",
                 backgroundPosition: "center 40%",
                 WebkitBackgroundClip: "text",
