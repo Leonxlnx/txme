@@ -79,7 +79,8 @@ const fragmentShader = `
   }
   
   void main() {
-    vec2 uv = vUv;
+    // Zoom in to prevent edge artifacts from wave distortion
+    vec2 uv = vUv * 0.9 + 0.05;
     float time = uTime;
     
     // ── Distortions ──
@@ -118,6 +119,9 @@ const fragmentShader = `
         // Reveal Logic: Everything inside the wave becomes colored temporarily
         revealAmount = smoothstep(waveOuter, waveInner, clickDist) * (1.0 - clickProgress);
     }
+    
+    // Clamp UVs so we never sample outside the texture
+    distortedUv = clamp(distortedUv, 0.0, 1.0);
     
     vec4 texColor = texture2D(uTexture, distortedUv);
     float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
