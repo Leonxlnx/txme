@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Syne, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -7,9 +7,22 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const syne = Syne({
+  variable: "--font-syne",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "TXME — Time is Your Canvas",
-  description: "Redefine how you experience every moment. TXME transforms time into something you can see, feel, and shape.",
+  title: "TXME Studio — Immersive Digital Experiences",
+  description:
+    "We craft digital experiences that move people. TXME is a creative studio for immersive web, interactive installations, and visual storytelling.",
 };
 
 export default function RootLayout({
@@ -20,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${inter.variable} font-sans antialiased bg-black text-white`}
+        className={`${inter.variable} ${syne.variable} ${spaceGrotesk.variable} font-sans antialiased bg-black text-white`}
       >
         {children}
       </body>
