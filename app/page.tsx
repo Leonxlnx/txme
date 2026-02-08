@@ -57,7 +57,7 @@ export default function Home() {
 
           {/* Top Right Tag */}
           <span
-            className="text-[0.65rem] tracking-[0.2em] uppercase text-white/40"
+            className="text-[0.65rem] tracking-[0.2em] uppercase text-white/70"
             style={{ fontFamily: "var(--font-space)" }}
           >
             Berlin — 2025
@@ -139,9 +139,9 @@ export default function Home() {
           {/* Bottom Left: Scroll Indicator */}
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-center gap-2">
-              <div className="w-[1px] h-8 bg-white/30 animate-pulse" />
+              <div className="w-[1px] h-8 bg-white/50 animate-pulse" />
               <span
-                className="text-[0.55rem] tracking-[0.3em] uppercase text-white/30 writing-mode-vertical"
+                className="text-[0.55rem] tracking-[0.3em] uppercase text-white/50 writing-mode-vertical"
                 style={{ fontFamily: "var(--font-space)", writingMode: "vertical-rl" }}
               >
                 Scroll
@@ -149,25 +149,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Bottom Center: Click hint */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center animate-pulse">
-              <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-            </div>
-            <span
-              className="text-[0.5rem] tracking-[0.25em] uppercase text-white/25"
-              style={{ fontFamily: "var(--font-space)" }}
-            >
-              Click to reveal
-            </span>
-          </div>
-
           {/* Bottom Right: Social / Links */}
           <div className="flex flex-col items-end gap-1">
-            {["Instagram", "Dribbble", "GitHub"].map((social, i) => (
+            {["Instagram", "Dribbble", "GitHub"].map((social) => (
               <span
                 key={social}
-                className="text-[0.55rem] tracking-[0.15em] uppercase text-white/25 hover:text-white/60 transition-colors duration-300 cursor-pointer pointer-events-auto"
+                className="text-[0.55rem] tracking-[0.15em] uppercase text-white/50 hover:text-white/80 transition-colors duration-300 cursor-pointer pointer-events-auto"
                 style={{ fontFamily: "var(--font-space)" }}
               >
                 {social}
