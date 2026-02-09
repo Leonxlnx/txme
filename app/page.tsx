@@ -353,7 +353,7 @@ export default function Home() {
         <div
           className="pointer-events-none absolute bottom-0 inset-x-0 z-20 h-[70vh]"
           style={{
-            background: "linear-gradient(190deg, transparent 52%, rgba(0,0,0,0.15) 59%, rgba(0,0,0,0.4) 66%, rgba(0,0,0,0.75) 74%, black 84%)",
+            background: "linear-gradient(190deg, transparent 59%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.4) 72%, rgba(0,0,0,0.75) 80%, black 90%)",
           }}
         />
         {/* Pixelated + grid along the diagonal */}
